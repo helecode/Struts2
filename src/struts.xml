@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 设置是否支持动态调用 -->
+	<constant name="struts.enable.DynamicmethodInvocation"  value="true"></constant>
+	<!-- 是否支持开发者模式 -->
+	<constant name="struts.devmode" value="false"></constant>
+	<!-- 设置编码格式 -->
+	<constant name="strurs.il8n.encoding"  value="GB2312"></constant>
+	<!-- 当文件修改后是否重新加载,多个文件用逗号分隔开 -->
+	<constant name="strurs.configuration.files" value="struts-defaut.xml,struts.xml"></constant>
+	<!-- 设置struts的配置文件修改后，系统是否会自动重新加载该文件,默认false -->
+	<constant name="struts.configuration.xml.reload" value="true"></constant>
+	<!-- 上传文件总数大小限制 -->
+	<constant name="struts.multipart.maxsize" value="100000"></constant>
+	
+	<!-- 报名不能相同，默认继承struts-default包，namespace表示命名空间 -->
+	<package name="default" namespace="/" extends="struts-default">
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="myAbstractinter01" class="S1114Interceptor.S1AbstractInterceptor"></interceptor>
+			<interceptor name="myInterceptor02" class="S1114Interceptor.S2Interceptor"></interceptor>
+			<!-- 配置拦截栈 -->
+			<interceptor-stack name="interStack">
+				<interceptor-ref name="myAbstractinter01"></interceptor-ref>
+				<interceptor-ref name="myInterceptor02"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<action name="login" class="S1101Struts2First.S1LoginAction">
+			<result name="success">/S1111Struts2/S2success.jsp</result>
+			<result name="fail">/S1111Struts2/S3fail.jsp</result>
+		</action>
+		<!-- 常规动态调用 -->
+		<action name="logindynamic" class="S1113DynamicMethodInvocation.S1DynamicMethodInvocation">
+			<result name="logindynamic_success">/S1112DynamicmethodInvocation/S2Success.jsp</result>
+			<result name="logindynamic_fail">/S1112DynamicmethodInvocation/S3fail.jsp</result>
+			<interceptor-ref name="interStack"></interceptor-ref>
+		</action>
+		<!-- 统配符动态调用 -->
+		<action name="*_*" class="S1113DynamicMethodInvocation.{1}" method="{2}">
+			<result name="logindynamic_success">/S1112DynamicmethodInvocation/S2Success.jsp</result>
+			<result name="logindynamic_fail">/S1112DynamicmethodInvocation/S3fail.jsp</result>	
+		</action>
+		<!-- API测试 -->
+		<action name="S1decoupling" class="S1112API.S1decoupling" method="decouplingActionContext"></action>
+		<action name="S2coupled" class="S1112API.S2coupled" method="coupledServletActionContext"></action>
+		<!-- ajax标签请求 -->
+		<action name="time">
+			<result>/S1115strutsl-tags/S2time.jsp</result>
+		</action>
+		<!-- 值栈测试 -->
+		<action name="valueStack" class="S1116ValueStack.S1ValueStack">
+			<result name="valueStack">/S1116ognl/S3ValueStackSuccess.jsp</result>
+		</action>
+			<!-- 文件上传 -->
+		<action name="upload" class="S1117uploaddown.S1Fileupload">
+			<param name= "savePath">/upload</param>
+			<result name="FileUpSuccess">/S1117uploaddown/S2successs.jsp</result>
+		</action>
+			<!-- 文件下载 -->
+		<action name="filedown" class="S1117uploaddown.S2FileDownload">
+			<param name="inputPath">/upload</param>			
+	   		<result name="success" type="stream">
+				<param name="inputName">inputStream</param>
+				<param name="bufferSize">8096</param><!-- 缓冲区长度 -->
+	 		 </result> 
+		</action>
+	</package>
+		
+		
+</struts>
